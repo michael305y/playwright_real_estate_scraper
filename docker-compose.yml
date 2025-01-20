@@ -1,0 +1,60 @@
+# version: '3.8'
+
+# services:
+#   web:
+#     image: slim:latest
+#     container_name: slim_container
+#     ports:
+#       - '8000:8000'
+#     volumes:
+#       - .:/app
+#     # environment:
+
+version: '3.8'
+
+services:
+  web:
+    build: .
+    # image: slim:latest
+    # command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - '8000:8000'
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+
+    environment:
+      - DEBUG=0
+    # env_file:
+    #   - .env
+    # command: sh -c "python manage.py scraper && gunicorn --bind 0.0.0.0:8000 real_estate_scraper_project.wsgi:application"
+
+  scraper:
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      - DEBUG=0
+    depends_on:
+      - postgres
+    # command: python manage.py z # will change it later
+    command: python manage.py async_trial # will change it later
+
+  postgres:
+    image: postgres:15
+    container_name: django-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: django-postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - django-db-data:/var/lib/postgresql/data
+
+volumes:
+  django-db-data:
+
+
