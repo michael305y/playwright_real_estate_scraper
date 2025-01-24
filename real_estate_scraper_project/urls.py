@@ -22,6 +22,7 @@ from real_estate_scraper_app import views
 
 router = routers.DefaultRouter()
 router.register(r'agents', views.AgentViewSet)
+router.register(r'agent_records', views.AgentRecordViewSet)
 
 
 urlpatterns = [

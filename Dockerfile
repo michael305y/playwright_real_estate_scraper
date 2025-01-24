@@ -27,6 +27,7 @@ RUN pip install --upgrade pip && \
     playwright install --with-deps
 
 COPY . .
+# COPY .env /app/.env  
 
 RUN python manage.py collectstatic --noinput
 

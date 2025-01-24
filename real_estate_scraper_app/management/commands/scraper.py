@@ -1,8 +1,26 @@
-from asyncio import sleep
-from django.utils import timezone
-from django.core.management.base import BaseCommand
+"""
+scraper cmmand imports from the main_scraper module
+"""
 
-from real_estate_scraper_app.models import Agent_profile_details
+from django.core.management.base import BaseCommand
+from django.utils import timezone
+import asyncio
+import os
+import django
+
+# Set up Django environment
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "real_estate_scraper_project.settings")
+django.setup()
+
+from asgiref.sync import sync_to_async
+
+from real_estate_scraper_app.models import Agent_profile_details, all_states_links, cities_real_estate_links
+
+from real_estate_scraper_app.styling_colors import BLUE_COLOR, GREEN_COLOR, RED_COLOR, RESET_COLOR
+
+
+from main_scraper import main
+
 
 class Command(BaseCommand):
     help = 'Displays current time'
@@ -10,18 +28,12 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # while True:
         try:
-            while True:
-                time = timezone.now().strftime('%X')
-                self.stdout.write(f"It's now {time}")
+            time = timezone.now().strftime('%X')
+            self.stdout.write(f"It's now {time}")
+
+            asyncio.run(main())
                 
-                # Example of inserting data for testing
-                # Uncomment the following line if needed
-                # Agent_profile_details.objects.create(agent_name='example_name')
 
-                # Print the current record count
-                record_count = Agent_profile_details.objects.count()
-                self.stdout.write(f"Current record count: {record_count}")
-
-                sleep(6)
+            # sleep(6)
         except KeyboardInterrupt:
-            self.stdout.write("Command interrupted. Exiting gracefully.")
+            self.stdout.write("Command interrupted... Exiting...")

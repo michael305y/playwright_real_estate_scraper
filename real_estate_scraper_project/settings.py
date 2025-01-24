@@ -10,25 +10,39 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+import environ
+
+# env = environ.Env(
+#     # set casting, default value
+#     DEBUG=(bool, False)
+# )
+
+env = environ.FileAwareEnv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Take environment variables from .env file
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+# env = environ.Env(DEBUG=(bool, False), )
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#_cig9h__@*3x65i^(d*i@hn_pp!1xil19wl_^j3-g%w#m$@2f'
-# SECRET_KEY = os.environ.get("SECRET_KEY")
+## SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-# DEBUG = bool(os.environ.get("DEBUG", default=0))
+# DEBUG = True
+DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = ['*']
-# ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(",")
+# ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["localhost"])
 
 
 # Application definition
@@ -37,6 +51,8 @@ INSTALLED_APPS = [
     'real_estate_scraper_app',
 
     'rest_framework',
+
+    'import_export',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -93,30 +109,28 @@ WSGI_APPLICATION = 'real_estate_scraper_project.wsgi.application'
 
 ## ============== for production=======================
 
-# DATABASES = {
-#      'default': {
-#          'ENGINE': 'django.db.backends.{}'.format(
-#              os.getenv('DATABASE_ENGINE', 'postgresql')
-#          ),
-#          'NAME': os.getenv('DATABASE_NAME', 'django-postgres'),
-#          'USER': os.getenv('DATABASE_USERNAME', 'postgres'),
-#          'PASSWORD': os.getenv('DATABASE_PASSWORD', 'Strong_password!'),
-#          'HOST': os.getenv('DATABASE_HOST', 'postgres'),
-#          'PORT': os.getenv('DATABASE_PORT', 5432),
-#      }
-#  }
-
 DATABASES = {
-
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django-postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',     # will change it later
-        'HOST': 'postgres',
-        'PORT': 5432,
+        'ENGINE': env("DATABASE_ENGINE", default="django.db.backends.postgresql"),
+        'NAME': env("DATABASE_NAME", default="django-postgres"),
+        'USER': env("DATABASE_USERNAME", default="postgres"),
+        'PASSWORD': env("DATABASE_PASSWORD", default="postgres"),
+        'HOST': env("DATABASE_HOST", default="postgres"),
+        'PORT': env("DATABASE_PORT", default="5432"),
     }
 }
+
+# DATABASES = {
+
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'django-postgres',
+#         'USER': 'postgres',
+#         'PASSWORD': 'postgres',     # will change it later
+#         'HOST': 'postgres',
+#         'PORT': 5432,
+#     }
+# }
 
 
 
@@ -173,6 +187,9 @@ STORAGES = {
 
 
 REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [

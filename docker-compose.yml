@@ -26,8 +26,8 @@ services:
 
     environment:
       - DEBUG=0
-    # env_file:
-    #   - .env
+    env_file:
+      - .env
     # command: sh -c "python manage.py scraper && gunicorn --bind 0.0.0.0:8000 real_estate_scraper_project.wsgi:application"
 
   scraper:
@@ -38,8 +38,8 @@ services:
       - DEBUG=0
     depends_on:
       - postgres
-    # command: python manage.py z # will change it later
-    command: python manage.py async_trial # will change it later
+    # command: python manage.py async_trial # will change it later
+    command: python manage.py scraper # will change it later
 
   postgres:
     image: postgres:15
