@@ -37,8 +37,6 @@ The custom command `scraper.py` initiates the script
 6. You should be welcomed with the below image
   ![Image](https://github.com/user-attachments/assets/b32a26d6-62ba-4a9e-be8b-4d9e9442d5c0)
 
-7. bonus you can activate venv and run docker logs once everything is set up. with `activate_venv.sh`(*place this in the the same directory as your project directory created earlier*) This will ease *`cd` into the project, activating and checking docker containers and theirs logs.* feel free to  modify the script. `
-
 
 
 
