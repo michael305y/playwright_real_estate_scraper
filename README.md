@@ -34,7 +34,10 @@ The custom command `scraper.py` initiates the script
   DJANGO_CSRF_TRUSTED_ORIGINS=https://your_domain
  ~~~
 5. you can now build your image `docker compose build` once successsfull, run or start a container with `docker compose up`.
-6. 
+6. You should be welcomed with the below image
+  ![Image](https://github.com/user-attachments/assets/b32a26d6-62ba-4a9e-be8b-4d9e9442d5c0)
+
+7. bonus you can activate venv and run docker logs once everything is set up. This will ease activating and checking docker containers and theirs logs. feel free to  modify the script. `
 
 
 
