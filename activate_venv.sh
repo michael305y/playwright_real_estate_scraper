@@ -42,7 +42,7 @@ if [ "$user_input" == "Y" ]; then
 
     sleep 2
 
-    docker logs -f face07e9f063
+    docker logs -f d2ae668adaa7    # change this to the curerent image ID of the scraper
 
 elif [ "$user_input" == "N" ]; then
     echo "wacha tuache story ya logs we fanya mambo yako."
