@@ -79,36 +79,34 @@ async def grab_agent_profile_details_2(page):
     except Exception as e:
         print({e})
 
-    agent_about_info_locator = page.locator('#demo-customized-menu')   # either use this 1) more accurate but flaky
-    # agent_about_info_locator = page.get_by_test_id('AgentProfile')       # 2) lessaccurate
+    agent_about_info_locator = page.locator('#demo-customized-menu')   
     if await agent_about_info_locator.count() > 0:
         info = await agent_about_info_locator.text_content()
     else:
         info = 'No About info Found'
     print(info)
 
-    ## ====================social media links ========================================
-    agent_IG_link_locator  =  page.get_by_test_id("basicMedia").get_by_role("link", name="instagram")  # sometines works on headed mode
+    agent_IG_link_locator  =  page.get_by_test_id("basicMedia").get_by_role("link", name="instagram")  #
     if await agent_IG_link_locator.count() > 0:
         IG_link = await agent_IG_link_locator.get_attribute('href')
     else:
         IG_link = 'No IG info Found'
     print(IG_link)
 
-    agent_FB_link_locator  =  page.get_by_test_id("basicMedia").get_by_role("link", name="facebook")  # sometimes works on headed mode
+    agent_FB_link_locator  =  page.get_by_test_id("basicMedia").get_by_role("link", name="facebook")  
     if await agent_FB_link_locator.count() > 0:
         FB_link = await agent_FB_link_locator.get_attribute('href')
     else:
         FB_link = 'No about FB info Found'
     print(FB_link)
 
-    agent_twitter_link_locator  =  page.get_by_test_id("basicMedia").get_by_role("link", name="twitter")  # only works on headed mode
+    agent_twitter_link_locator  =  page.get_by_test_id("basicMedia").get_by_role("link", name="twitter")  
     if await agent_twitter_link_locator.count() > 0:
         twitter_link = await agent_twitter_link_locator.get_attribute('href')
     else:
         twitter_link = 'No about Twitter info Found'
     print(twitter_link)
-#     # =================================end of social media linsk ==========================
+
 
     agent_designation_locator = page.locator('li.Designations_underorderListItem__M092N')
     agent_designations =  await agent_designation_locator.all_text_contents()
@@ -148,7 +146,6 @@ async def grab_agent_profile_details_2(page):
         str(Home_for_sale)
         listings = await process_listings(agent_current_listing_prices, agent_listing_property_details, agent_listing_property_location)
         
-        # Append the number of homes for sale to the final return value
         current_listings = f"{Home_for_sale} Homes for sale\n"
         current_listings += f"{listings}\n"
     else:
@@ -170,21 +167,16 @@ async def process_listings(*args):
                                                            agent_listing_properties):
         
         current_homes_for_sale = f"-> A {price} home in {listing_location} with ({listing_properties})."
-        # print(current_homes_for_sale)
         all_current_listings.append(current_homes_for_sale)
 
-    # print(all_current_listings)
     return all_current_listings
-    # print('processed all current listings')
-
-
+   
 async def process_agent_details(page, get_agent_urls, state_code):
     '''
     processes agent details vigorouly
     uses grab_agent_profile_details_2() to locate elemensts
     '''
     print(f'agent============ {state_code}')
-    # urls = await get_agent_urls_from_DB()
     urls = deque(get_agent_urls)
     total_urls = len(urls)
     print(f' found {total_urls} profile urls')
@@ -209,27 +201,8 @@ async def process_agent_details(page, get_agent_urls, state_code):
     urls_checked_list = []
     urls_with_errors_list = []
 
-    ## 1) ============== all at once =====================
-    # while urls:
-    #     current_url = urls.popleft()
-    #     try:
-    #         await page.goto(current_url)
-    #         print(f"Processing URL: {current_url}")
-    #         # Replace with your processing logic
-    #         await grab_agent_profile_details_2(page)
-    #         # await process_url(current_url)
-    #     except Exception as e:
-    #         print(f"Error processing {current_url}: {e}")
-    #         ## no of urls not processed to be captured and saved/marked as not processed
 
-    #         continue
-    #     await asyncio.sleep(2)
-
-    #     print('next person ====')
-    ##============ processing all at one ======================
-
-    ## 2) ======= to use batch to process ========================= 
-    page_size = 12  # number of agents per page
+    page_size = 12 
     print(f"Total URLs: {total_urls}")
 
     no_of_batches = total_urls / page_size
@@ -237,7 +210,6 @@ async def process_agent_details(page, get_agent_urls, state_code):
     done_batches = 0
     done_batches_list = []
     while urls:
-        # process a batch of URLs(12 each)
         batch = [urls.popleft() for _ in range(min(page_size, len(urls)))]
         print(f"Processing batch: {len(batch)}")
 
@@ -285,10 +257,6 @@ async def process_agent_details(page, get_agent_urls, state_code):
                     agent_role_list.append(agent_role)
                     google_map_link_list.append(google_map_link)
                     current_listings_list.append(current_listings)
-
-
-                 ## update the urls have been completed
-                urls_checked_list.append(current_url)   #### i'll check this later and work on it
                
             except Exception as e:
                 print(f"Error processing {current_url}: {e}")
@@ -329,12 +297,7 @@ async def process_agent_details(page, get_agent_urls, state_code):
                                                     current_listings_list,
                                                     state_code
                                                     )   
-                                            
-
-            # saved_data = [names_list,]
-            # for data_list in saved_data:
-            #     data_list.clear()
-
+ 
             done_batches_list.clear()
             names_list.clear()
             license_list.clear()
@@ -351,10 +314,6 @@ async def process_agent_details(page, get_agent_urls, state_code):
             agent_role_list.clear()
             google_map_link_list.clear()
             current_listings_list.clear()
-
-            
-
-    ## ============== end of batch processing=========================
 
 
 async def process_agent_details_by_click(page, agent_url_buttons):
@@ -471,30 +430,9 @@ async def main():
         browser = await p.chromium.launch(headless=True)
         page = await browser.new_page()  
 
-        ### for testing the functioning of this module
-        PERSONAL_URLS = [
-            'https://www.coldwellbanker.com/il/schaumburg/agents/aleya-abdulawal/aid-P00200000GXKzUvdvzi5AxiL2H0KZGRJ4EVDzmid',
-            # 'https://www.coldwellbanker.com/ma/city-unavailable/agents/dan-aaron/aid-P00200000GPBwKsOUgLGNiSKcpj6Fbhfj6GtuxG7',
-            'https://www.coldwellbanker.com/il/long-grove/agents/sandee-abern/aid-P00200000FSk1BEWme338RGzrg5kCVa6v0baoU9X',
-            'https://www.coldwellbanker.com/ma/haverhill/agents/marybeth-abate/aid-P00200000FSk0ZHNmCbWFfTtVy5r29HRwdvPXohK',
-            'https://www.coldwellbanker.com/al/dothan/agents/bobby-estes/aid-P00200000FDdsKnjVBLDHhyDgFtEyG6vLLjqTnic',
-            'https://www.coldwellbanker.com/il/edwardsville/agents/abid-ali/aid-P00200000FDdqn3n7SLvMeszlA1RXtQWRUaS3IS9',
-            'https://www.coldwellbanker.com/ct/orange/agents/farhat-abbas/aid-P00200000GOyXxlI5GT4tweLNjG3GkX9toEAmAeG',
-            'https://www.coldwellbanker.com/ca/huntington-beach/agents/fay-abed/aid-P00200000FegXntYZ4oo4SjEyD9TK2CrXlavw23s'
-          ]
-
-        # if headless mode:  # uncomment the below hhtp headers
         await page.set_extra_http_headers({
               "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
             })
-
-        ## uncommnent o the following only when testing
-        # await page.goto(PERSONAL_URL)
-        # print(await page.title())
-
-        ## await process_agent_details(page, get_agent_urls_from_DB)
-
-        # await browser.close()
 
 if __name__ == '__main__':
     asyncio.run(main())
